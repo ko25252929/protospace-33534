@@ -1,7 +1,7 @@
 class PrototypesController < ApplicationController
-    before_action :set_prototype, only: [:show]
-    before_action :move_to_index, except: [:index, :shwo]
+    before_action :set_prototype, except: [:index, :new, :create]
     before_action :authenticate_user!, except: [:index, :show]
+    before_action :contributor_confirmation, only: [:edit, :update, :destroy]
 
   def index
     @prototypes = Prototype.all
@@ -41,7 +41,7 @@ class PrototypesController < ApplicationController
   def destroy
       prototype = Prototype.find(params[:id])
       prototype.destroy
-      redirect_to root_path
+      redirect_to user_session_path
   end 
   
   
@@ -53,6 +53,10 @@ class PrototypesController < ApplicationController
   
   def set_prototype
     @prototype = Prototype.find(params[:id])
+  end
+
+  def contributor_confirmation
+    redirect_to root_path unless current_user == @prototype.user
   end
 
   def move_to_index
